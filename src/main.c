@@ -165,6 +165,7 @@ int scopcm = 0;
 int i2s = 0;
 int no2bytes = 0;
 int tosleep = 0;
+int reset_counter = 0;
 
 struct termios termios;
 uchar buffer[1024];
@@ -747,6 +748,8 @@ hci_send_cmd(uchar *buf, int len)
 void
 expired(int sig)
 {
+	reset_counter += 1;
+
 	hci_send_cmd(hci_reset, sizeof(hci_reset));
 	alarm(4);
 }
@@ -754,8 +757,12 @@ expired(int sig)
 void
 proc_reset()
 {
-	signal(SIGALRM, expired);
+	if (reset_counter == 5) {
+		fprintf(stderr,"brcm-patchram-plus reset_counter reached %i, aborting...\n", reset_counter);
+		abort();
+	}
 
+	signal(SIGALRM, expired);
 
 	hci_send_cmd(hci_reset, sizeof(hci_reset));
 
