@@ -762,6 +762,7 @@ expired(int sig)
 void
 proc_reset()
 {
+	fprintf(stderr, "entering proc_reset() with reset_counter: %i\n", reset_counter);
 	signal(SIGALRM, expired);
 
 	hci_send_cmd(hci_reset, sizeof(hci_reset));
@@ -944,8 +945,10 @@ main (int argc, char **argv)
 	}
 
 	init_uart();
+	fprintf(stderr, "leaving init_uart()\n");
 
 	proc_reset();
+	fprintf(stderr, "leaving proc_reset()\n");
 
 	if (use_baudrate_for_download) {
 		if (termios_baudrate) {
