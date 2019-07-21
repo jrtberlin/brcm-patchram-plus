@@ -751,7 +751,10 @@ expired(int sig)
 {
 	reset_counter += 1;
 	fprintf(stderr,"brcm-patchram-plus reset_counter at %i\n", reset_counter);
-
+	if (reset_counter == 5) {
+		fprintf(stderr,"brcm-patchram-plus reset_counter reached %i, aborting...\n", reset_counter);
+		abort();
+	}
 	hci_send_cmd(hci_reset, sizeof(hci_reset));
 	alarm(4);
 }
@@ -759,11 +762,6 @@ expired(int sig)
 void
 proc_reset()
 {
-	if (reset_counter == 5) {
-		fprintf(stderr,"brcm-patchram-plus reset_counter reached %i, aborting...\n", reset_counter);
-		abort();
-	}
-
 	signal(SIGALRM, expired);
 
 	hci_send_cmd(hci_reset, sizeof(hci_reset));
