@@ -665,6 +665,7 @@ parse_cmd_line(int argc, char **argv)
 void
 init_uart()
 {
+	fprintf(stderr, "init_uart\n");
 	tcflush(uart_fd, TCIOFLUSH);
 	tcgetattr(uart_fd, &termios);
 
@@ -749,6 +750,7 @@ void
 expired(int sig)
 {
 	reset_counter += 1;
+	fprintf(stderr,"brcm-patchram-plus reset_counter at %i\n", reset_counter);
 
 	hci_send_cmd(hci_reset, sizeof(hci_reset));
 	alarm(4);
